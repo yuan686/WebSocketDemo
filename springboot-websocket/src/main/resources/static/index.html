@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button onclick="sendMessage()">测试</button>
+<script>
+    let uid = getQueryParam('uid');
+    let socket = new WebSocket("ws://localhost:9999/websocket/" + uid);
+    socket.onerror = err => {
+        console.log(err);
+    };
+    socket.onopen = event => {
+        console.log(event);
+    };
+    socket.onmessage = mess => {
+        console.log(mess);
+    };
+    socket.onclose = () => {
+        console.log("连接关闭");
+    };
+
+    function getQueryParam(param) {
+        let urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    //1给2发消息
+    function sendMessage() {
+        if (socket.readyState === 1) socket.send("{\"toUid\":\"2\",\"message\":\"hello websocket\"}");
+        else alert("尚未建立websocket连接");
+    }
+</script>
+</body>
+</html>
